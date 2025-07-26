@@ -2,66 +2,68 @@ package com.visionreport.model;
 
 import java.time.LocalDateTime;
 
-/**
- * Represents a single log entry or step within a {@link TestCase}.
- * <p>
- * This class captures a specific event that occurred during a test's execution,
- * including its status, a descriptive message, and the exact time it happened.
- * It is a fundamental component for providing detailed, step-by-step test
- * reports.
- * </p>
- *
- * @author Vision-Report Team
- * @version 0.0.1-SNAPSHOT
- * @since 0.0.1
- */
 public class LogEntry {
 
-	private final LocalDateTime timestamp;
+	private String logId;
+	private String name;
+	private String message;
 	private final Status status;
-	private final String message;
+	private final LocalDateTime timestamp;
+	private Media media; // New field
 
-	// private Attachment attachment; // To be implemented in a future step
-
-	/**
-	 * Constructs a new LogEntry. The timestamp is automatically set to the moment
-	 * of instantiation.
-	 *
-	 * @param status  The {@link Status} of the log entry (e.g., PASS, FAIL, INFO).
-	 * @param message A descriptive message detailing the event.
-	 */
-	public LogEntry(Status status, String message) {
+	LogEntry(Status status, String name) {
 		this.timestamp = LocalDateTime.now();
 		this.status = status;
-		this.message = message;
+		this.name = name;
+		this.message = "No message available.";
 	}
 
-	// --- Getters ---
-
-	/**
-	 * Gets the timestamp when the log entry was created.
-	 * 
-	 * @return The creation time as a {@link LocalDateTime}.
-	 */
-	public LocalDateTime getTimestamp() {
-		return timestamp;
+	// Getters
+	public String getLogId() {
+		return logId;
 	}
 
-	/**
-	 * Gets the status of the log entry.
-	 * 
-	 * @return The {@link Status} of the log.
-	 */
+	public String getName() {
+		return name;
+	}
+
+	public String getMessage() {
+		return message;
+	}
+
 	public Status getStatus() {
 		return status;
 	}
 
+	public LocalDateTime getTimestamp() {
+		return timestamp;
+	}
+
+	public Media getMedia() {
+		return media;
+	} // New getter
+
+	// Fluent Setters
+	LogEntry setLogId(String logId) {
+		this.logId = logId;
+		return this;
+	}
+
+	public LogEntry setMessage(String message) {
+		if (message != null && !message.trim().isEmpty()) {
+			this.message = message;
+		}
+		return this;
+	}
+
 	/**
-	 * Gets the descriptive message for the log entry.
+	 * Attaches a media object (e.g., screenshot) to this log entry.
 	 * 
-	 * @return The log message string.
+	 * @param media The {@link Media} object to attach.
+	 * @return The current {@link LogEntry} instance for method chaining.
 	 */
-	public String getMessage() {
-		return message;
+	public LogEntry attachMedia(Media media) {
+		this.media = media;
+		return this;
 	}
 }
