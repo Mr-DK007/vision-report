@@ -155,8 +155,8 @@
             .ui-testing-col-left .test-search-button:hover{box-shadow:var(--shadow-inset)}
             .ui-testing-col-left .card-body{height:calc(100% - var(--header-height))}
             .test-list-container{flex-grow:1;overflow-y:auto;height:100%}
-            .test-card{display:flex;align-items:center;justify-content:space-between;padding:12px;border-bottom:1px solid var(--border-color);background-color:var(--bg-color);cursor:pointer;transition:all 0.3s ease}
-            .test-card:hover{box-shadow:var(--shadow-inset)}
+            .test-card{display:flex;align-items:center;justify-content:space-between;padding:12px;border-bottom:1px solid var(--border-color);background-color:var(--bg-color);cursor:pointer;}
+            .test-card:hover{background: linear-gradient(90deg, rgba(var(--primary-color-rgb),0.08) 0%, rgba(var(--primary-color-rgb),0.03) 100%);}
             .test-card[test-status="pass"].active{background-color:rgba(var(--success-color-rgb),0.1);box-shadow:var(--shadow-inset)}
             .test-card[test-status="fail"].active{background-color:rgba(var(--danger-color-rgb),0.1);box-shadow:var(--shadow-inset)}
             .test-card[test-status="skip"].active{background-color:rgba(var(--warning-color-rgb),0.1);box-shadow:var(--shadow-inset)}
