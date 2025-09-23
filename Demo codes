@@ -1,62 +1,20 @@
-import com.microsoft.playwright.*;
-import java.util.*;
+Locator headers = page.locator("//div[contains(@class,'ag-header-cell-text')]");
+Locator rows = page.locator("//div[contains(@class,'ag-center-cols-container')]//div[contains(@class,'ag-row')]");
 
-public class VirtualizedTableScraper {
-    public static void main(String[] args) {
-        try (Playwright playwright = Playwright.create()) {
-            Browser browser = playwright.chromium().launch(new BrowserType.LaunchOptions().setHeadless(false));
-            Page page = browser.newPage();
-            page.navigate("https://your-angular-table-url.com");
+Map<String, List<String>> tableData = new LinkedHashMap<>();
 
-            // Locators (adjust based on Angular table DOM)
-            Locator headers = page.locator("//div[contains(@class,'ag-header-cell-text')]");
-            Locator rows = page.locator("//div[contains(@class,'ag-center-cols-container')]//div[contains(@class,'ag-row')]");
+int headerCount = headers.count();
+for (int col = 0; col < headerCount; col++) {
+    Locator headerCell = headers.nth(col);
+    headerCell.scrollIntoViewIfNeeded();  // ✅ auto scrolls so header is visible
+    String header = headerCell.innerText().trim();
+    tableData.putIfAbsent(header, new ArrayList<>());
 
-            Locator scrollContainer = page.locator("//div[contains(@class,'ag-body-viewport')]");
-
-            // Store final result: header → list of values
-            Map<String, List<String>> tableData = new LinkedHashMap<>();
-
-            double lastScrollLeft = -1;
-            while (true) {
-                List<String> visibleHeaders = headers.allInnerTexts();
-
-                // Loop over visible headers
-                for (int col = 0; col < visibleHeaders.size(); col++) {
-                    String header = visibleHeaders.get(col).trim();
-                    if (!tableData.containsKey(header)) {
-                        tableData.put(header, new ArrayList<>());
-                    }
-
-                    // Collect all row values for this column
-                    for (int r = 0; r < rows.count(); r++) {
-                        Locator rowCells = rows.nth(r).locator(".//div[contains(@class,'ag-cell')]");
-                        if (col < rowCells.count()) {
-                            String value = rowCells.nth(col).innerText().trim();
-                            tableData.get(header).add(value);
-                        }
-                    }
-                }
-
-                // Scroll horizontally
-                page.evaluate("el => el.scrollBy(200, 0)", scrollContainer);
-
-                // Stop if no more scroll is possible
-                double currentScrollLeft = page.evaluate("el => el.scrollLeft", scrollContainer).asDouble();
-                if (currentScrollLeft == lastScrollLeft) {
-                    break;
-                }
-                lastScrollLeft = currentScrollLeft;
-
-                page.waitForTimeout(500); // allow re-render
-            }
-
-            // Print table data
-            for (Map.Entry<String, List<String>> entry : tableData.entrySet()) {
-                System.out.println(entry.getKey() + " => " + entry.getValue());
-            }
-
-            browser.close();
-        }
+    int rowCount = rows.count();
+    for (int r = 0; r < rowCount; r++) {
+        Locator rowCell = rows.nth(r).locator(".//div[contains(@class,'ag-cell')]").nth(col);
+        rowCell.scrollIntoViewIfNeeded(); // ✅ makes sure cell is rendered
+        String value = rowCell.innerText().trim();
+        tableData.get(header).add(value);
     }
 }
